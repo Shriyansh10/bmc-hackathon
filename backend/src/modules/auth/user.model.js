@@ -22,7 +22,7 @@ export const createUser = async (pool, { name, email, hashedPassword }) => {
 
 
 // Get user by email
-export const getUserByEmail = async (pool, email) => {
+export const getUserByEmail = async (pool, {email}) => {
   try{
     const result = await pool.query(
       `SELECT id, name, email FROM users WHERE email = $1`,

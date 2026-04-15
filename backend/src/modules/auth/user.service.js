@@ -32,10 +32,9 @@ const login = async ({ email, password }) => {
     hashedRefreshToken,
     refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
   });
-  console.log(userObj);
   if (!userObj) throw ApiError.expectationFailed("RefreshToken not updated");
 
-  return userObj;
+  return {userObj, accessToken, refreshToken};
 };
 
 

@@ -7,8 +7,9 @@ const register = async (req, res) => {
 }
 
 const login = async (req, res) => {
-    const user = await services.login(req.body);
-    ApiResponse.created(res, 'User Login Successfully', user)
+    const {user, accessToken, refreshToken} = await services.login(req.body);
+    res.cookies('refreshToken', refreshToken)
+    ApiResponse.created(res, 'User Login Successfully', {user, accessToken})
 }
 
 export {register, login}
