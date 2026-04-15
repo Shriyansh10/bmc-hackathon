@@ -8,6 +8,6 @@ app.use(express.urlencoded({extended: true}))
 
 app.get('/health', (req, res) => res.status(200).send('Alive'))
 
-app.use('/api/auth', authRouter)
+app.use('/api/auth', authRouter);
 
 export default app;

@@ -22,6 +22,9 @@ class ApiError extends Error{
   static notfound(message = "notfound") {
     return new ApiError(412, message);
   }
+  static expectationFailed(message = "requesthandler expectation failed") {
+    return new ApiError(417, message);
+  }
 }
 
 export default ApiError

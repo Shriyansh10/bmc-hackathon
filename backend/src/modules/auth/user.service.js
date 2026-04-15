@@ -1,19 +1,43 @@
-import * as models from "./user.model.js"; 
+import * as models from "./user.model.js";
 import ApiError from "../../common/utils/api-error.js";
 import * as utils from "../../common/utils/jwt.utils.js";
-import pool from '../../common/config/db.js'
+import pool from "../../common/config/db.js";
 
 const register = async ({ name, email, password }) => {
-  try {
-    const hashedPassword = await utils.hash(password);
-    console.log(hashedPassword)
-    const user = await models.createUser(pool, { name, email, hashedPassword });
-    return user;
-  } catch (error) {
-    throw ApiError.badRequest('User not created')
-  }
+  const hashedPassword = await utils.bcryptHash(password);
+  const user = await models.getUserByEmail(pool, {email});
+  if (!user) throw ApiError.unauthorized("User already created");
+
+  const userObj = await models.createUser(pool, { name, email, hashedPassword });
+  if (!userObj) throw ApiError.forbidden("User not created");
+  return userObj;
 };
 
-export {register}
+const login = async ({ email, password }) => {
+  const user = await models.getUserWithPasswordByEmail(pool, { email });
+  if (!user) throw ApiError.notfound();
+
+  const isMatched = await utils.bcryptCompare(password, user.password);
+  if (!isMatched) throw ApiError.forbidden("Wrong Credentials");
+
+  const accessToken = utils.generateAccessToken({
+    id: user.id,
+    email: user.email,
+  });
+  const refreshToken = utils.generateRefreshToken({ id: user.id });
+
+  const hashedRefreshToken = await utils.bcryptHash(refreshToken);
+  const userObj = await models.updateRefreshToken(pool, {
+    email,
+    hashedRefreshToken,
+    refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
+  });
+  console.log(userObj);
+  if (!userObj) throw ApiError.expectationFailed("RefreshToken not updated");
+
+  return userObj;
+};
 
 
+
+export { register, login };

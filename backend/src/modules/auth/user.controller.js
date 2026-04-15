@@ -3,7 +3,12 @@ import * as services from './user.service.js'
 
 const register = async (req, res) => {
     const user = await services.register(req.body);
-    ApiResponse.created(res, 'User created successfully', user)
+    ApiResponse.created(res, 'User Created Successfully', user)
 }
 
-export {register}
+const login = async (req, res) => {
+    const user = await services.login(req.body);
+    ApiResponse.created(res, 'User Login Successfully', user)
+}
+
+export {register, login}

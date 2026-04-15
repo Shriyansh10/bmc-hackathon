@@ -1,0 +1,16 @@
+endpoints
+
+http://127.0.0.1:8000/api/auth/register 
+body 
+{
+    "name": "Shriyansh Agarwal",
+    "email": "agarwalshriyansh007@gmail.com",
+    "password": "abc@123456"
+}
+
+http://127.0.0.1:8000/api/auth/login 
+body 
+{
+    "email": "agarwalshriyansh007@gmail.com",
+    "password": "abc@123456"
+}

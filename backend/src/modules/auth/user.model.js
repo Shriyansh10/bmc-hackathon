@@ -16,21 +16,51 @@ export const createUser = async (pool, { name, email, hashedPassword }) => {
     
     return result.rows[0];
   }catch(error){
-    console.log(error)
+    throw ApiError.badRequest(error.message)
   }
 };
 
 
 // Get user by email
 export const getUserByEmail = async (pool, email) => {
-  const result = await pool.query(
-    `SELECT * FROM users WHERE email = $1`,
-    [email]
-  );
-
-  return result.rows[0];
+  try{
+    const result = await pool.query(
+      `SELECT id, name, email FROM users WHERE email = $1`,
+      [email]
+    );
+    return result.rows[0];
+  }catch(error){
+    throw ApiError.badRequest(error.message)
+  }
 };
 
+// Get user by email with password
+export const getUserWithPasswordByEmail = async (pool, {email}) => {
+  try{
+    const result = await pool.query(
+      `SELECT id, name, email, password FROM users WHERE email = $1`,
+      [email]
+    );
+    return result.rows[0];
+  }catch(error){
+    throw ApiError.badRequest(error.message)
+  }
+};
+
+export const updateRefreshToken = async (pool, {email, hashedRefreshToken, refreshTokenExpiresIn}) => {
+  try{
+    const result = await pool.query(
+      `UPDATE users
+      SET refresh_token = $1, refresh_token_expires_in = $2
+      WHERE email = $3
+      RETURNING name`,
+      [hashedRefreshToken, refreshTokenExpiresIn, email]
+    );
+    return result.rows[0];
+  }catch(error){
+    console.log(error)
+  }
+};
 
 // Get user by id
 export const getUserById = async (pool, id) => {
