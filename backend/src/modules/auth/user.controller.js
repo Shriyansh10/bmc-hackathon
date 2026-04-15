@@ -23,4 +23,10 @@ const profile = async (req, res) => {
   ApiResponse.ok(res, 'Profile Details', user)
 };
 
-export { register, login, profile };
+const logout = async (req, res) => {
+  await authServices.logout(req.user);
+  res.cookie('refreshToken', null)
+  ApiResponse.ok(res, 'Logout Successfull')
+}
+
+export { register, login, profile, logout};

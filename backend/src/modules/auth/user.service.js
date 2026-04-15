@@ -43,5 +43,9 @@ const profile = async (user) => {
   return userObj;
 }
 
+const logout = async ({email}) => {
+  const user = await models.updateRefreshToken(pool, {email, hashedRefreshToken: null, refreshTokenExpiresIn: null});
+  if(!user) throw ApiError.notfound();
+}
 
-export { register, login, profile};
+export { register, login, profile, logout};

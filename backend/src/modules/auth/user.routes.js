@@ -10,5 +10,6 @@ const router = Router()
 router.post('/register', validate(RegisterDto), controller.register)
 router.post('/login', validate(LoginDto), controller.login)
 router.get('/profile', authenticate, controller.profile)
+router.get('/logout', authenticate, controller.logout)
 
 export default router;
