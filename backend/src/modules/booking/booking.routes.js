@@ -6,6 +6,6 @@ import * as bookingMiddleware from '../booking/booking.middlewares.js'
 const router = Router()
 
 router.get('/seats', controller.getAllSeats)
-router.get('/booking/:id', authMiddleware.authenticate, bookingMiddleware.authorize, controller.bookSeat)
+router.get('/:id/:name', authMiddleware.authenticate, bookingMiddleware.authorize, controller.bookSeat)
 
 export default router;
