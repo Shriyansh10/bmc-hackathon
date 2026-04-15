@@ -73,7 +73,6 @@ export const getUserById = async (pool, {id}) => {
 };
 
 
-// Update user
 export const getUserWithRefreshTokenById = async (pool, {id}) => {
   const result = await pool.query(
     `SELECT id, name, email, refresh_token FROM users WHERE id = $1`,
@@ -83,11 +82,3 @@ export const getUserWithRefreshTokenById = async (pool, {id}) => {
   return result.rows[0];
 };
 
-
-// Delete user
-export const deleteUser = async (pool, {id}) => {
-  await pool.query(
-    `DELETE FROM users WHERE id = $1`,
-    [id]
-  );
-};

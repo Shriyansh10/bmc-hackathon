@@ -44,7 +44,6 @@ const refreshToken = async (token)=>{
     
     const user = await models.getUserWithRefreshTokenById(pool, decodedToken);
     if(!user) throw ApiError.notfound('User not found')
-      console.log(user)
       
   const isMatch = utils.bcryptCompare(token, user.refresh_token)
   if(!isMatch) throw ApiError.conflict('Token Invalid');
