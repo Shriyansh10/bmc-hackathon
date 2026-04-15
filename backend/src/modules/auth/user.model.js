@@ -74,10 +74,10 @@ export const getUserById = async (pool, {id}) => {
 
 
 // Update user
-export const updateUserName = async (pool, {id, name}) => {
+export const getUserWithRefreshTokenById = async (pool, {id}) => {
   const result = await pool.query(
-    `UPDATE users SET name = $1 WHERE id = $2 RETURNING *`,
-    [name, id]
+    `SELECT id, name, email, refresh_token FROM users WHERE id = $1`,
+    [id]
   );
 
   return result.rows[0];

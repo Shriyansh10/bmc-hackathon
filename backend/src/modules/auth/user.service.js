@@ -6,7 +6,7 @@ import pool from "../../common/config/db.js";
 const register = async ({ name, email, password }) => {
   const hashedPassword = await utils.bcryptHash(password);
   const user = await models.getUserByEmail(pool, {email});
-  if (!user) throw ApiError.unauthorized("User already created");
+  if (user) throw ApiError.unauthorized("User already created");
 
   const userObj = await models.createUser(pool, { name, email, hashedPassword });
   if (!userObj) throw ApiError.forbidden("User not created");
@@ -37,6 +37,35 @@ const login = async ({ email, password }) => {
   return {user: userObj, accessToken, refreshToken};
 };
 
+const refreshToken = async (token)=>{
+  const decodedToken = await utils.verifyRefreshToken(token);
+  if(!decodedToken) throw ApiError.unauthorized('Invalid Token')
+
+    
+    const user = await models.getUserWithRefreshTokenById(pool, decodedToken);
+    if(!user) throw ApiError.notfound('User not found')
+      console.log(user)
+      
+  const isMatch = utils.bcryptCompare(token, user.refresh_token)
+  if(!isMatch) throw ApiError.conflict('Token Invalid');
+
+  const accessToken = utils.generateAccessToken({
+    id: user.id,
+    email: user.email,
+  });
+  const refreshToken = utils.generateRefreshToken({ id: user.id });
+
+  const hashedRefreshToken = await utils.bcryptHash(refreshToken);
+  const userObj = await models.updateRefreshToken(pool, {
+    email: user.email,
+    hashedRefreshToken,
+    refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
+  });
+  if (!userObj) throw ApiError.expectationFailed("RefreshToken not updated");
+
+  return {user: userObj, accessToken, refreshToken};
+}
+
 const profile = async (user) => {
   const userObj = await models.getUserById(pool, user)
   if(!userObj) throw ApiError.notfound('User not found');
@@ -48,4 +77,4 @@ const logout = async ({email}) => {
   if(!user) throw ApiError.notfound();
 }
 
-export { register, login, profile, logout};
+export { register, login, profile, logout, refreshToken};
