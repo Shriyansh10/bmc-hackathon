@@ -1,6 +1,4 @@
 import ApiError from "../../common/utils/api-error.js";
-import * as utils from "../../common/utils/jwt.utils.js";
-import * as models from "./booking.model.js";
 import pool from "../../common/config/db.js";
 import { getSeat } from "./booking.model.js";
 
